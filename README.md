@@ -1,2 +1,2 @@
 # 2FA
-two factor authentication
+2FA using twilio verify service
