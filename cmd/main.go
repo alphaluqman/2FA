@@ -1,24 +1,18 @@
 package main
 
 import (
-	"fmt"
 	"github.com/alphaluqman/2FA/intenal/api"
 	"github.com/alphaluqman/2FA/intenal/client"
 	"github.com/alphaluqman/2FA/intenal/service"
+	helper "github.com/alphaluqman/2FA/utils"
 	"github.com/gofiber/fiber/v2"
-	"github.com/joho/godotenv"
 	"log"
 	"os"
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Printf("Error loading .env file: %v", err)
-		return
-	}
+	helper.Init()
 	app := fiber.New()
-
 	// initialize twillio clinet
 	twilioClient := client.InitTwilioClient()
 
@@ -27,15 +21,14 @@ func main() {
 	authHandler := api.NewAuthHandler(authService)
 	api.SetupRoutes(app, authHandler)
 
-	//go func() {
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = ":8080"
 	}
-	if err = app.Listen(port); err != nil {
-		fmt.Println(err)
-		//log.Fatal(err)
+
+	// start server
+	if err := app.Listen(port); err != nil {
+		log.Fatal(err)
 	}
-	//}()
 
 }
